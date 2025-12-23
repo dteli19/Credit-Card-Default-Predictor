@@ -1,109 +1,125 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 # -----------------------------
 # Page Configuration
 # -----------------------------
-st.set_page_config(
-    page_title="Credit Card Default Predictor",
-    layout="centered"
-)
+st.set_page_config(page_title="Credit Card Default Predictor", layout="centered")
 
 # -----------------------------
-# Title & Description
+# Header
 # -----------------------------
-st.title("💳 Credit Card Default Prediction")
+st.title("Credit Card Default Prediction")
 st.subheader("Machine Learning based Risk Classification")
 
 st.write(
     """
-    This application demonstrates a **credit card default prediction model**
-    built using **Logistic Regression** and **Classification Tree** techniques.
-    
-    The final model focuses on **interpretability, stability, and business usability**
-    for proactive credit risk management.
+    This application summarizes a credit card default prediction project using
+    Logistic Regression and Classification Tree models. The final selection focuses on
+    interpretability, stability, and business usability for proactive credit risk management.
     """
 )
 
 # -----------------------------
 # Business Problem
 # -----------------------------
-st.markdown("### 📌 Business Problem")
+st.markdown("### Business Problem")
 st.write(
     """
-    Credit card defaults result in financial losses and increased operational costs
-    for banks. Identifying high-risk customers early allows institutions to:
-    - Reduce credit losses
-    - Prioritize customer interventions
-    - Improve portfolio health
+    Credit card defaults lead to financial losses and increased operational costs for banks.
+    Predicting default risk helps institutions reduce credit losses, prioritize interventions,
+    and improve overall portfolio health.
     """
 )
 
 # -----------------------------
-# Model Summary
+# Model Comparison Table (Styled)
 # -----------------------------
-st.markdown("### 🧠 Model Overview")
+st.markdown("### Model Performance Comparison")
 
 model_summary = pd.DataFrame({
     "Model": ["Logistic Regression", "Classification Tree"],
     "AUC": [0.772, 0.760],
-    "Precision": ["58%", "60%"],
-    "Sensitivity": ["62%", "50%"],
+    "Precision (%)": [58, 60],
+    "Sensitivity (%)": [62, 50],
     "F1 Score": [0.542, 0.530]
 })
 
-st.table(model_summary)
+st.dataframe(
+    model_summary.style
+        .format({"AUC": "{:.3f}", "F1 Score": "{:.3f}"})
+        .background_gradient(subset=["AUC", "F1 Score"], cmap="Blues"),
+    use_container_width=True
+)
 
 st.success(
-    "Logistic Regression was selected as the final model due to its "
-    "strong performance, interpretability, and suitability for financial decision-making."
+    "Final Model Selected: Logistic Regression. It provides the best balance of performance and interpretability."
 )
 
 # -----------------------------
 # Key Drivers
 # -----------------------------
-st.markdown("### 🔍 Key Drivers of Default Risk")
+st.markdown("### Key Drivers of Default Risk")
 st.write(
     """
-    The most influential predictors of default are:
+    The strongest signals of default risk come from repayment behavior, especially recent payment delays
+    and low payments relative to billed amounts.
+    
+    Most influential drivers:
     - Recent repayment delays (PAY_0, PAY_2)
-    - Low payment amounts relative to bill amounts
+    - Low payment amounts compared to outstanding bills
     - High outstanding balances
     - Lower credit limits combined with rising balances
-
-    Demographic variables such as age and education have a relatively smaller impact.
     """
 )
 
 # -----------------------------
-# Risk Segmentation
+# Risk Segmentation Table (Styled)
 # -----------------------------
-st.markdown("### 🚦 Risk Segmentation Strategy")
+st.markdown("### Risk Segmentation and Action Strategy")
 
 risk_table = pd.DataFrame({
     "Risk Level": ["High Risk", "Medium Risk", "Low Risk"],
-    "Probability Range": [">= 0.26", "0.18 – 0.26", "< 0.18"],
-    "Recommended Action": [
-        "Immediate outreach, limit review, payment plans",
-        "Monitor closely, reminders, auto-pay nudges",
-        "Standard servicing"
+    "Default Probability": ["≥ 0.26", "0.18 to 0.26", "< 0.18"],
+    "Business Action": [
+        "Immediate outreach, credit limit review, payment plans",
+        "Close monitoring, reminders, auto-pay nudges",
+        "Standard servicing, no intervention"
     ]
 })
 
-st.table(risk_table)
+st.dataframe(
+    risk_table.style
+        .set_properties(**{"text-align": "left"})
+        .applymap(lambda x: "font-weight: bold;" if x == "High Risk" else "", subset=["Risk Level"]),
+    use_container_width=True
+)
 
 # -----------------------------
 # Business Impact
 # -----------------------------
-st.markdown("### 💡 Business Impact")
+st.markdown("### Business Impact")
 st.write(
     """
-    Using this model enables banks to:
-    - Identify high-risk customers before default occurs
-    - Allocate collections and customer service resources efficiently
-    - Reduce unnecessary interventions for low-risk customers
-    - Make data-driven credit policy decisions
+    This model supports banks in:
+    - Identifying high-risk customers before default occurs
+    - Allocating collections and customer support resources efficiently
+    - Reducing unnecessary interventions for low-risk customers
+    - Supporting smarter, data-driven credit policy decisions
+    """
+)
+
+# -----------------------------
+# Project Learnings
+# -----------------------------
+st.markdown("### Project Learnings")
+st.write(
+    """
+    Key learnings from this project:
+    - Accuracy alone is not sufficient for imbalanced datasets, AUC and F1 are more meaningful.
+    - Cutoff tuning is critical to balance missed defaulters and false positives.
+    - Repayment behavior consistently outperforms demographic variables in predicting default.
+    - Interpretable models are valuable in financial settings for decision-making and compliance.
     """
 )
 
@@ -111,4 +127,4 @@ st.write(
 # Footer
 # -----------------------------
 st.markdown("---")
-st.caption("Credit Card Default Prediction | Machine Learning Project")
+st.caption("Credit Card Default Prediction | ML Project")
